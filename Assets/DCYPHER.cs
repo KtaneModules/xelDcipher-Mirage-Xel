@@ -54,7 +54,6 @@ public class DCYPHER : MonoBehaviour {
         caesarKey = UnityEngine.Random.Range(1, 26);
         caesarText.text = caesarKey.ToString();
         playfairKey = "";
-        char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".ToCharArray();
         playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
         playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
         playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
@@ -158,7 +157,14 @@ public class DCYPHER : MonoBehaviour {
         //There is no J in the alphabet, I is used instead!
         char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".ToCharArray();
 
+        //region Adjust Key
+        keyWord = keyWord.Trim();
+        keyWord = keyWord.Replace(" ", "");
+        keyWord = keyWord.Replace("J", "I");
+        keyWord = keyWord.ToUpper();
+
         StringBuilder keyString = new StringBuilder();
+
         foreach (char c in keyWord)
         {
             if (!keyString.ToString().Contains(c))
@@ -170,7 +176,7 @@ public class DCYPHER : MonoBehaviour {
         //endregion
 
         adjustText(plainText);
-        adjustText(keyWord);
+
         //If the Length of the plain text is odd add X
         if ((plainText.Length % 2 > 0))
         {
@@ -330,12 +336,10 @@ public class DCYPHER : MonoBehaviour {
         string encryptedPuzzle = "";
         foreach (char c in plaintext)
         {
-            char convertedChar = c;
-            if (Convert.ToInt16(c) > 64 && Convert.ToInt16(c) < 92)
-            {
-                convertedChar = Convert.ToChar(((Convert.ToInt16(c) - 65 + key) % 26) + 65);
+            string convertedChar = c.ToString();
+            convertedChar = alphabet[(Array.IndexOf(alphabet, convertedChar) + key) % 26];
                 encryptedPuzzle = encryptedPuzzle + convertedChar;
-            }
+            
         }
         return encryptedPuzzle;
     }
