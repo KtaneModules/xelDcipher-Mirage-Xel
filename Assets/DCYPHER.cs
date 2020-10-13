@@ -51,14 +51,15 @@ public class DCYPHER : MonoBehaviour {
     }
     // Use this for initialization
     void Start() {
+        char[] alphabet = "ABCDEFGHIKLMNOPQRSTUVWXYZ".ToCharArray();
         caesarKey = UnityEngine.Random.Range(1, 26);
         caesarText.text = caesarKey.ToString();
         playfairKey = "";
-        playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
-        playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
-        playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
-        playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
-        playfairKey += alphabet[UnityEngine.Random.Range(0, 26)];
+        playfairKey += alphabet[UnityEngine.Random.Range(0, 25)];
+        playfairKey += alphabet[UnityEngine.Random.Range(0, 25)];
+        playfairKey += alphabet[UnityEngine.Random.Range(0, 25)];
+        playfairKey += alphabet[UnityEngine.Random.Range(0, 25)];
+        playfairKey += alphabet[UnityEngine.Random.Range(0, 25)];
         playfairText.text = playfairKey;
         answerWord = wordList[UnityEngine.Random.Range(0, 500)];
         startingWord = CaesarCipher(PlayfairCipher(playfairKey, answerWord), caesarKey);
@@ -343,6 +344,53 @@ public class DCYPHER : MonoBehaviour {
         }
         return encryptedPuzzle;
     }
-
+#pragma warning disable 414
+    private string TwitchHelpMessage = "use e.g. '!{0} submit ABCDEFGH' to submit the answer word.";
+#pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
+    {
+        command = command.ToLowerInvariant();
+        string validcmds = "abcdefghigklmnopqrstuvwxyz ";
+        string[] commandArray = command.Split(' ');
+        if (commandArray.Length != 2 || commandArray[0] != "submit" || commandArray[1].Length != letters.Length)
+        {
+            yield return "sendtochaterror @{0}, invalid command.";
+            yield break;
+        }
+        else
+        {
+            for (int i = 0; i < command.Length; i++)
+            {
+                if (!validcmds.Contains(command[i]))
+                {
+                    yield return "sendtochaterror Invalid command.";
+                    yield break;
+                }
+            }
+            for (int i = 0; i < letters.Length; i++)
+            {
+                yield return null;
+                letters[i].OnInteract();
+                while (letters[i].GetComponentInChildren<TextMesh>().text != commandArray[1][i].ToString().ToUpperInvariant())
+                {
+                    yield return null;
+                }
+                letters[i].OnInteractEnded();
+            }
+        }
+    }
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        for (int i = 0; i < letters.Length; i++)
+        {
+            yield return null;
+            letters[i].OnInteract();
+            while (letters[i].GetComponentInChildren<TextMesh>().text != answerWord[i].ToString())
+            {
+                yield return null;
+            }
+            letters[i].OnInteractEnded();
+        }
+    }
 
 }
