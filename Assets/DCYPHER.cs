@@ -25,7 +25,7 @@ public class DCYPHER : MonoBehaviour {
     string answerWord;
     int stageCounter = 1;
     bool breakCondition = false;
-    bool TPModeEnabled;
+    bool TwitchPlaysActive;
     static int moduleIDCounter = 1;
     int moduleID; public struct Cell
     {
@@ -125,35 +125,48 @@ public class DCYPHER : MonoBehaviour {
                 text.color = initial;
             }
             stageCounter = 1;
+            string playfairKey = "AS";
             Start();
         }
     }
     IEnumerator cycleLetters(TextMesh letter)
     {
-        int textIndex = 0;
-        List<string> alphabetShuffle = alphabet.ToList().Shuffle();
+
         breakCondition = false;
+        int textIndex = 0;
+        List<string> textOptions = new List<string> { };
+        string candidateLetter;
+        textOptions.Add(answerWord[Array.IndexOf<TextMesh>(texts, letter)].ToString());
+        for (int i = 0; i < 5; i++)
+        {
+            do
+            {
+                candidateLetter = alphabet[UnityEngine.Random.Range(0, 26)];
+            } while (textOptions.Contains(candidateLetter));
+            textOptions.Add(candidateLetter);
+        };
+        if (TwitchPlaysActive) { textOptions = alphabet.ToList().Shuffle(); }
+        else { textOptions = textOptions.Shuffle(); }
+
         while (true)
         {
             if (breakCondition)
             {
                 break;
             }
-
-            letter.text = alphabetShuffle[textIndex];
+            letter.text = textOptions[textIndex];
 
             ++textIndex;
 
-            if (textIndex >= alphabet.Count())
+            if (textIndex >= textOptions.Count())
                 textIndex = 0;
-            if (TPModeEnabled)
+            if (TwitchPlaysActive)
             {
-                yield return new WaitForSeconds(0.1f);
+                yield return new WaitForSeconds(0.01f);
             }
             else
             {
                 yield return new WaitForSeconds(1f);
-
             }
         }
 
@@ -356,7 +369,6 @@ public class DCYPHER : MonoBehaviour {
 #pragma warning restore 414
     IEnumerator ProcessTwitchCommand(string command)
     {
-        TPModeEnabled = true;
         command = command.ToLowerInvariant();
         string validcmds = "abcdefghigklmnopqrstuvwxyz ";
         string[] commandArray = command.Split(' ');
