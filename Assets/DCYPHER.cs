@@ -370,7 +370,7 @@ public class DCYPHER : MonoBehaviour {
     IEnumerator ProcessTwitchCommand(string command)
     {
         command = command.ToLowerInvariant();
-        string validcmds = "abcdefghijgklmnopqrstuvwxyz ";
+        string validcmds = "abcdefghijklmnopqrstuvwxyz ";
         string[] commandArray = command.Split(' ');
         if (commandArray.Length != 2 || commandArray[0] != "submit" || commandArray[1].Length != letters.Length)
         {
