@@ -196,7 +196,7 @@ public class DCYPHER : MonoBehaviour {
         }
         //endregion
 
-        adjustText(plainText);
+        plainText = adjustText(plainText);
 
         //If the Length of the plain text is odd add X
         if ((plainText.Length % 2 > 0))
@@ -370,7 +370,7 @@ public class DCYPHER : MonoBehaviour {
     IEnumerator ProcessTwitchCommand(string command)
     {
         command = command.ToLowerInvariant();
-        string validcmds = "abcdefghigklmnopqrstuvwxyz ";
+        string validcmds = "abcdefghijgklmnopqrstuvwxyz ";
         string[] commandArray = command.Split(' ');
         if (commandArray.Length != 2 || commandArray[0] != "submit" || commandArray[1].Length != letters.Length)
         {
